@@ -1,0 +1,202 @@
+[33mcommit 2e87313810f1266d009cb129b008d00d301d8de2[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Bencq <894056215@qq.com>
+Date:   Thu Apr 12 16:44:23 2018 +0800
+
+    Second commit.
+
+[1mdiff --git a/app/build.gradle b/app/build.gradle[m
+[1mindex d3fed60..9a0d52b 100644[m
+[1m--- a/app/build.gradle[m
+[1m+++ b/app/build.gradle[m
+[36m@@ -20,8 +20,12 @@[m [mandroid {[m
+ [m
+ dependencies {[m
+     implementation fileTree(dir: 'libs', include: ['*.jar'])[m
+[31m-    implementation 'com.android.support:appcompat-v7:26.0.0-beta1'[m
+[32m+[m[32m    implementation 'com.android.support:appcompat-v7:26.0.0'[m
+     implementation 'com.android.support.constraint:constraint-layout:1.0.2'[m
+[32m+[m[32m    implementation 'org.litepal.android:core:1.6.1'[m
+[32m+[m[32m    implementation 'com.squareup.okhttp3:okhttp:3.10.0'[m
+[32m+[m[32m    implementation 'com.google.code.gson:gson:2.8.2'[m
+[32m+[m[32m    implementation 'com.github.bumptech.glide:glide:3.7.0'[m
+     testImplementation 'junit:junit:4.12'[m
+     androidTestImplementation 'com.android.support.test:runner:0.5'[m
+     androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2'[m
+[1mdiff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml[m
+[1mindex 3cb22d3..fda8608 100644[m
+[1m--- a/app/src/main/AndroidManifest.xml[m
+[1m+++ b/app/src/main/AndroidManifest.xml[m
+[36m@@ -3,6 +3,7 @@[m
+     package="com.example.bencq.coolweather">[m
+ [m
+     <application[m
+[32m+[m[32m        android:name="org.litepal.LitePalApplication"[m
+         android:allowBackup="true"[m
+         android:icon="@mipmap/ic_launcher"[m
+         android:label="@string/app_name"[m
+[1mdiff --git a/app/src/main/assets/litepal.xml b/app/src/main/assets/litepal.xml[m
+[1mnew file mode 100644[m
+[1mindex 0000000..d45416e[m
+[1m--- /dev/null[m
+[1m+++ b/app/src/main/assets/litepal.xml[m
+[36m@@ -0,0 +1,10 @@[m
+[32m+[m[32m<?xml version="1.0" encoding="utf-8"?>[m
+[32m+[m[32m<litepal>[m
+[32m+[m[32m    <dbname value="cool_weather"/>[m
+[32m+[m[32m    <version value="1"/>[m
+[32m+[m[32m    <list>[m
+[32m+[m[32m        <mapping class="com.example.bencq.coolweather.db.Province"/>[m
+[32m+[m[32m        <mapping class="com.example.bencq.coolweather.db.City"/>[m
+[32m+[m[32m        <mapping class="com.example.bencq.coolweather.db.County"/>[m
+[32m+[m[32m    </list>[m
+[32m+[m[32m</litepal>[m
+\ No newline at end of file[m
+[1mdiff --git a/app/src/main/java/com/example/bencq/coolweather/db/City.java b/app/src/main/java/com/example/bencq/coolweather/db/City.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..2acb091[m
+[1m--- /dev/null[m
+[1m+++ b/app/src/main/java/com/example/bencq/coolweather/db/City.java[m
+[36m@@ -0,0 +1,47 @@[m
+[32m+[m[32mpackage com.example.bencq.coolweather.db;[m
+[32m+[m
+[32m+[m[32mimport org.litepal.crud.DataSupport;[m
+[32m+[m
+[32m+[m[32m/**[m
+[32m+[m[32m * Created by Bencq on 2018/04/12.[m
+[32m+[m[32m */[m
+[32m+[m
+[32m+[m[32mpublic class City extends DataSupport{[m
+[32m+[m
+[32m+[m[32m    private int id;[m
+[32m+[m[32m    private String cityName;[m
+[32m+[m[32m    private int cityCode;[m
+[32m+[m[32m    private int provinceId;[m
+[32m+[m
+[32m+[m[32m    public int getId() {[m
+[32m+[m[32m        return id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setId(int id) {[m
+[32m+[m[32m        this.id = id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public String getCityName() {[m
+[32m+[m[32m        return cityName;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setCityName(String cityName) {[m
+[32m+[m[32m        this.cityName = cityName;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public int getCityCode() {[m
+[32m+[m[32m        return cityCode;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setCityCode(int cityCode) {[m
+[32m+[m[32m        this.cityCode = cityCode;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public int getProvinceId() {[m
+[32m+[m[32m        return provinceId;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setProvinceId(int provinceId) {[m
+[32m+[m[32m        this.provinceId = provinceId;[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/src/main/java/com/example/bencq/coolweather/db/County.java b/app/src/main/java/com/example/bencq/coolweather/db/County.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..b81dca5[m
+[1m--- /dev/null[m
+[1m+++ b/app/src/main/java/com/example/bencq/coolweather/db/County.java[m
+[36m@@ -0,0 +1,46 @@[m
+[32m+[m[32mpackage com.example.bencq.coolweather.db;[m
+[32m+[m
+[32m+[m[32mimport org.litepal.crud.DataSupport;[m
+[32m+[m
+[32m+[m[32m/**[m
+[32m+[m[32m * Created by Bencq on 2018/04/12.[m
+[32m+[m[32m */[m
+[32m+[m
+[32m+[m[32mpublic class County extends DataSupport{[m
+[32m+[m[32m    private int id;[m
+[32m+[m[32m    private String countyName;[m
+[32m+[m[32m    private String weatherId;[m
+[32m+[m[32m    private int cityId;[m
+[32m+[m
+[32m+[m[32m    public int getId() {[m
+[32m+[m[32m        return id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setId(int id) {[m
+[32m+[m[32m        this.id = id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public String getCountyName() {[m
+[32m+[m[32m        return countyName;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setCountyName(String countyName) {[m
+[32m+[m[32m        this.countyName = countyName;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public String getWeatherId() {[m
+[32m+[m[32m        return weatherId;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setWeatherId(String weatherId) {[m
+[32m+[m[32m        this.weatherId = weatherId;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public int getCityId() {[m
+[32m+[m[32m        return cityId;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setCityId(int cityId) {[m
+[32m+[m[32m        this.cityId = cityId;[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/src/main/java/com/example/bencq/coolweather/db/Province.java b/app/src/main/java/com/example/bencq/coolweather/db/Province.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..ce29748[m
+[1m--- /dev/null[m
+[1m+++ b/app/src/main/java/com/example/bencq/coolweather/db/Province.java[m
+[36m@@ -0,0 +1,38 @@[m
+[32m+[m[32mpackage com.example.bencq.coolweather.db;[m
+[32m+[m
+[32m+[m[32mimport org.litepal.crud.DataSupport;[m
+[32m+[m
+[32m+[m[32m/**[m
+[32m+[m[32m * Created by Bencq on 2018/04/12.[m
+[32m+[m[32m */[m
+[32m+[m
+[32m+[m[32mpublic class Province extends DataSupport {[m
+[32m+[m
+[32m+[m[32m    private int id;[m
+[32m+[m[32m    private String provinceName;[m
+[32m+[m[32m    private int provinceCode;[m
+[32m+[m
+[32m+[m[32m    public int getId() {[m
+[32m+[m[32m        return id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setId(int id) {[m
+[32m+[m[32m        this.id = id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public String getProvinceName() {[m
+[32m+[m[32m        return provinceName;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setProvinceName(String provinceName) {[m
+[32m+[m[32m        this.provinceName = provinceName;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public int getProvinceCode() {[m
+[32m+[m[32m        return provinceCode;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setProvinceCode(int provinceCode) {[m
+[32m+[m[32m        this.provinceCode = provinceCode;[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
