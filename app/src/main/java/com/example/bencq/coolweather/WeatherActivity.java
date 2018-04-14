@@ -1,5 +1,6 @@
 package com.example.bencq.coolweather;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -9,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.bencq.coolweather.gson.Forecast;
 import com.example.bencq.coolweather.gson.Weather;
+import com.example.bencq.coolweather.service.AutoUpdateService;
 import com.example.bencq.coolweather.util.HttpUtil;
 import com.example.bencq.coolweather.util.Utility;
 
@@ -31,6 +34,8 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class WeatherActivity extends AppCompatActivity {
+
+    private static final String TAG = "WeatherActivity";
 
     public DrawerLayout drawerLayout;
     public SwipeRefreshLayout swipeRefreshLayout;
@@ -50,6 +55,7 @@ public class WeatherActivity extends AppCompatActivity {
     private ImageView imageView_bingPic;
 
     public static final String apiUrl = "http://guolin.tech/api/weather";
+    public static final String requestBingPicUrl = "http://guolin.tech/api/bing_pic";
     public static final String apiKey = "d5d70a1396da4f048d5688ba869f12ce";
 
 
@@ -134,6 +140,7 @@ public class WeatherActivity extends AppCompatActivity {
     public void requestWeather(final String weatherID)
     {
         String weatherUrl = apiUrl + "?cityid=" + weatherID + "&key=" + apiKey;
+        Log.d(TAG, "requestWeather: weatherUrl: " + weatherUrl);
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -188,6 +195,19 @@ public class WeatherActivity extends AppCompatActivity {
         textView_degree.setText(degree);
         textView_weatherInfo.setText(weatherInfo);
         linearLayout_forecast.removeAllViews();
+        if(true)
+        {
+            View view = LayoutInflater.from(WeatherActivity.this).inflate(R.layout.forecast_item, linearLayout_forecast, false);
+            TextView textView_date = (TextView)(view.findViewById(R.id.textView_date));
+            TextView textView_info = (TextView)(view.findViewById(R.id.textView_info));
+            TextView textView_max = (TextView)(view.findViewById(R.id.textView_max));
+            TextView textView_min = (TextView)(view.findViewById(R.id.textView_min));
+            textView_date.setText("日期");
+            textView_info.setText("天气");
+            textView_max.setText("最高温");
+            textView_min.setText("最低温");
+            linearLayout_forecast.addView(view);
+        }
         for(Forecast forecast : weather.forecastList)
         {
             View view = LayoutInflater.from(WeatherActivity.this).inflate(R.layout.forecast_item, linearLayout_forecast, false);
@@ -208,14 +228,22 @@ public class WeatherActivity extends AppCompatActivity {
             textView_pm25.setText(weather.aqi.city.pm25);
         }
         String comfort = "舒适度:" + weather.suggestion.comfort.info;
-        String carWash = "洗车指数:" + weather.suggestion.carWash;
-        String sport = "运动建议:" + weather.suggestion.sport;
+        String carWash = "洗车指数:" + weather.suggestion.carWash.info;
+        String sport = "运动建议:" + weather.suggestion.sport.info;
+
+        Log.d(TAG, "showWeatherInfo: " + comfort);
+        Log.d(TAG, "showWeatherInfo: " + carWash);
+        Log.d(TAG, "showWeatherInfo: " + sport);
 
         textView_comfort.setText(comfort);
         textView_carWash.setText(carWash);
         textView_sport.setText(sport);
 
         scrollView_weatherLayout.setVisibility(View.VISIBLE);
+
+        //启动服务
+        Intent intent = new Intent(WeatherActivity.this, AutoUpdateService.class);
+        startService(intent);
     }
 
     /**
@@ -223,7 +251,6 @@ public class WeatherActivity extends AppCompatActivity {
      */
     private void loadBingPic()
     {
-        String requestBingPicUrl = "http://guolin.tech/api/bing_pic";
         HttpUtil.sendOkHttpRequest(requestBingPicUrl, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -239,7 +266,7 @@ public class WeatherActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Glide.with(WeatherActivity.this).load(bingPicUrl).into(imageView_bingPic);
+                       Glide.with(WeatherActivity.this).load(bingPicUrl).into(imageView_bingPic);
                     }
                 });
             }
